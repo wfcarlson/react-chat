@@ -9,7 +9,7 @@ class App extends Component {
     super(props);
     this.state = {
       token: "",
-      user: {},
+      user: null,
     }
   }
 
@@ -76,12 +76,11 @@ class App extends Component {
   }
 
   getUser = () => {
-    if (this.state.user.name) {
+    if (this.state.user) {
       return this.state.user;
     }
     else {
       var user = JSON.parse(sessionStorage.getItem('user'));
-      this.setState({ user: user });
       return user;
     }
   }
@@ -90,7 +89,11 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          { this.loggedIn() ?  "Logged in as " + this.getUser().name : <LoginComponent setToken={this.setToken} /> }
+          { this.getUser() ?  
+            "Logged in as " + this.getUser().name 
+             : 
+            <LoginComponent setToken={this.setToken} /> 
+          }
         </header>
       </div>
     );
