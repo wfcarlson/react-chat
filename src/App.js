@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import LoginComponent from './LoginComponent';
 import { API_ROOT } from './config.js';
+import HomeComponent from './HomeComponent';
 
 class App extends Component {
 
@@ -38,7 +39,7 @@ class App extends Component {
       .catch(err => { console.log(err); });
   }
 
-  req = (route, method, body) => {
+  request = (route, method, body) => {
     var token;
 
     if (this.state.token) {
@@ -46,7 +47,7 @@ class App extends Component {
     }
     else{
       token = sessionStorage.getItem('token');
-      this.setState(token);
+      this.setState({token: token});
     }
 
     var data = {
@@ -59,6 +60,12 @@ class App extends Component {
       };
       
     return fetch(API_ROOT + route, data);
+  }
+
+  logout = () => {
+    this.setState({token: "", user: null})
+    sessionStorage.setItem('token', null);
+    sessionStorage.setItem('user', null);
   }
 
   loggedIn = () => {
@@ -88,13 +95,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          { this.getUser() ?  
-            "Logged in as " + this.getUser().name 
-             : 
+        { this.getUser() ?
+          <HomeComponent user={this.getUser()} logout={this.logout} request={this.request} />
+            :
+          <div className="login">
             <LoginComponent setToken={this.setToken} /> 
-          }
-        </header>
+          </div>
+        }
       </div>
     );
   }
